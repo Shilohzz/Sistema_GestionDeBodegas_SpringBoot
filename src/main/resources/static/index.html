@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LogiTrack — Sistema de Gestión de Bodegas</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-page">
+    <div class="login-bg-grid"></div>
+    <div class="login-container">
+        <div class="login-brand">
+            <span class="brand-icon">⬡</span>
+            <h1>LogiTrack</h1>
+            <p>Sistema de Gestión y Auditoría de Bodegas</p>
+        </div>
+        <div class="login-card">
+            <div id="login-msg" class="msg"></div>
+            <div class="field-group">
+                <label>Email institucional</label>
+                <input type="email" id="login-email" placeholder="usuario@logitrack.com" onkeydown="if(event.key==='Enter') login()">
+            </div>
+            <div class="field-group">
+                <label>Contraseña</label>
+                <input type="password" id="login-password" placeholder="••••••••" onkeydown="if(event.key==='Enter') login()">
+            </div>
+            <button class="btn-login" onclick="login()">Ingresar al sistema →</button>
+        </div>
+    </div>
+</div>
+
+<!-- APP -->
+<div id="app-page">
+
+    <!-- SIDEBAR -->
+    <aside id="sidebar">
+        <div class="sidebar-brand">
+            <span class="brand-icon-sm">⬡</span>
+            <span>LogiTrack</span>
+        </div>
+        <nav class="sidebar-nav">
+            <button class="nav-item active" onclick="showSection('bodegas', this)">
+                <span class="nav-icon">🏭</span><span>Bodegas</span>
+            </button>
+            <button class="nav-item" onclick="showSection('productos', this)">
+                <span class="nav-icon">📦</span><span>Productos</span>
+            </button>
+            <button class="nav-item" onclick="showSection('clientes', this)">
+                <span class="nav-icon">🤝</span><span>Clientes</span>
+            </button>
+            <button class="nav-item" onclick="showSection('categorias', this)">
+                <span class="nav-icon">🏷️</span><span>Categorías</span>
+            </button>
+            <button class="nav-item" onclick="showSection('usuarios', this)">
+                <span class="nav-icon">👤</span><span>Usuarios</span>
+            </button>
+            <div class="nav-divider"></div>
+            <button class="nav-item" onclick="showSection('movimientos', this)">
+                <span class="nav-icon">🔄</span><span>Movimientos</span>
+            </button>
+            <button class="nav-item" onclick="showSection('inventario', this)">
+                <span class="nav-icon">📊</span><span>Inventario</span>
+            </button>
+            <button class="nav-item" onclick="showSection('auditoria', this)">
+                <span class="nav-icon">🔍</span><span>Auditoría</span>
+            </button>
+        </nav>
+        <div class="sidebar-footer">
+            <span id="user-info-sidebar"></span>
+            <button class="btn-logout-sidebar" onclick="logout()">Salir</button>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-wrapper">
+        <header class="topbar">
+            <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+            <div class="topbar-title" id="topbar-title">Bodegas</div>
+            <div class="topbar-right">
+                <span id="user-info-top"></span>
+            </div>
+        </header>
+
+        <main>
+
+            <!-- BODEGAS -->
+            <div id="sec-bodegas" class="section active">
+                <div class="page-header">
+                    <h2>Gestión de Bodegas</h2>
+                    <span class="page-subtitle">Registra y administra las bodegas del sistema</span>
+                </div>
+                <div class="card form-card">
+                    <div class="card-header-label">FORMULARIO</div>
+                    <div id="bodega-msg" class="msg"></div>
+                    <input type="hidden" id="bodega-id">
+                    <div class="form-grid">
+                        <div class="field-group"><label>Nombre comercial</label><input id="bodega-nombre" placeholder="Bodega Norte"></div>
+                        <div class="field-group"><label>Ciudad</label><input id="bodega-ciudad" placeholder="Bogotá"></div>
+                        <div class="field-group"><label>Dirección exacta</label><input id="bodega-direccion" placeholder="Calle 123 #45-67"></div>
+                        <div class="field-group"><label>Capacidad máxima (unidades)</label><input id="bodega-capacidad" type="number" placeholder="500"></div>
+                        <div class="field-group"><label>ID del encargado</label><input id="bodega-encargado" type="number" placeholder="1"></div>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn btn-primary" onclick="guardarBodega()">Guardar</button>
+                        <button class="btn btn-ghost" onclick="limpiarBodega()">Limpiar</button>
+                    </div>
+                </div>
+                <div class="card table-card">
+                    <div class="card-header-label">REGISTROS</div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead><tr><th>ID</th><th>Nombre</th><th>Ciudad</th><th>Capacidad</th><th>Encargado</th><th>Estado</th><th>Acciones</th></tr></thead>
+                            <tbody id="tabla-bodegas"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PRODUCTOS -->
+            <div id="sec-productos" class="section">
+                <div class="page-header">
+                    <h2>Gestión de Productos</h2>
+                    <span class="page-subtitle">Administra los productos almacenados en las bodegas</span>
+                </div>
+                <div class="card form-card">
+                    <div class="card-header-label">FORMULARIO</div>
+                    <div id="producto-msg" class="msg"></div>
+                    <input type="hidden" id="producto-id">
+                    <div class="form-grid">
+                        <div class="field-group"><label>Nombre comercial</label><input id="producto-nombre" placeholder="Cajas de cartón"></div>
+                        <div class="field-group"><label>Descripción</label><input id="producto-descripcion" placeholder="Descripción del producto"></div>
+                        <div class="field-group"><label>ID Categoría</label><input id="producto-categoria" type="number" placeholder="1"></div>
+                        <div class="field-group"><label>ID Cliente propietario</label><input id="producto-cliente" type="number" placeholder="1"></div>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn btn-primary" onclick="guardarProducto()">Guardar</button>
+                        <button class="btn btn-ghost" onclick="limpiarProducto()">Limpiar</button>
+                    </div>
+                </div>
+                <div class="card table-card">
+                    <div class="card-header-label">REGISTROS</div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead><tr><th>ID</th><th>Nombre</th><th>Descripción</th><th>Categoría</th><th>Cliente</th><th>Acciones</th></tr></thead>
+                            <tbody id="tabla-productos"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CLIENTES -->
+            <div id="sec-clientes" class="section">
+                <div class="page-header">
+                    <h2>Gestión de Clientes</h2>
+                    <span class="page-subtitle">Clientes propietarios de los productos almacenados</span>
+                </div>
+                <div class="card form-card">
+                    <div class="card-header-label">FORMULARIO</div>
+                    <div id="cliente-msg" class="msg"></div>
+                    <input type="hidden" id="cliente-id">
+                    <div class="form-grid">
+                        <div class="field-group"><label>Nombre completo</label><input id="cliente-nombre" placeholder="Juan Pérez / Empresa S.A."></div>
+                        <div class="field-group">
+                            <label>Tipo de cliente</label>
+                            <select id="cliente-tipo">
+                                <option value="PERSONA_NATURAL">Persona Natural</option>
+                                <option value="EMPRESA">Empresa</option>
+                            </select>
+                        </div>
+                        <div class="field-group"><label>Número de documento</label><input id="cliente-documento" placeholder="1007999211"></div>
+                        <div class="field-group"><label>Email de contacto</label><input id="cliente-email" placeholder="cliente@empresa.com"></div>
+                        <div class="field-group"><label>Teléfono</label><input id="cliente-telefono" placeholder="3001234567"></div>
+                        <div class="field-group"><label>Dirección principal</label><input id="cliente-direccion" placeholder="Calle 123"></div>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn btn-primary" onclick="guardarCliente()">Guardar</button>
+                        <button class="btn btn-ghost" onclick="limpiarCliente()">Limpiar</button>
+                    </div>
+                </div>
+                <div class="card table-card">
+                    <div class="card-header-label">REGISTROS</div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead><tr><th>ID</th><th>Nombre</th><th>Tipo</th><th>Documento</th><th>Email</th><th>Acciones</th></tr></thead>
+                            <tbody id="tabla-clientes"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CATEGORIAS -->
+            <div id="sec-categorias" class="section">
+                <div class="page-header">
+                    <h2>Gestión de Categorías</h2>
+                    <span class="page-subtitle">Clasifica los productos por categorías</span>
+                </div>
+                <div class="card form-card">
+                    <div class="card-header-label">FORMULARIO</div>
+                    <div id="categoria-msg" class="msg"></div>
+                    <input type="hidden" id="categoria-id">
+                    <div class="form-grid">
+                        <div class="field-group"><label>Nombre</label><input id="categoria-nombre" placeholder="Electrónica"></div>
+                        <div class="field-group"><label>Descripción</label><input id="categoria-descripcion" placeholder="Descripción de la categoría"></div>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn btn-primary" onclick="guardarCategoria()">Guardar</button>
+                        <button class="btn btn-ghost" onclick="limpiarCategoria()">Limpiar</button>
+                    </div>
+                </div>
+                <div class="card table-card">
+                    <div class="card-header-label">REGISTROS</div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead><tr><th>ID</th><th>Nombre</th><th>Descripción</th><th>Acciones</th></tr></thead>
+                            <tbody id="tabla-categorias"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- USUARIOS -->
+            <div id="sec-usuarios" class="section">
+                <div class="page-header">
+                    <h2>Gestión de Usuarios</h2>
+                    <span class="page-subtitle">Administra los usuarios del sistema</span>
+                </div>
+                <div class="card form-card">
+                    <div class="card-header-label">FORMULARIO</div>
+                    <div id="usuario-msg" class="msg"></div>
+                    <input type="hidden" id="usuario-id">
+                    <div class="form-grid">
+                        <div class="field-group"><label>Nombre completo</label><input id="usuario-nombre" placeholder="Juan Pérez"></div>
+                        <div class="field-group"><label>Email institucional</label><input id="usuario-email" placeholder="juan@logitrack.com"></div>
+                        <div class="field-group"><label>Contraseña</label><input type="password" id="usuario-password" placeholder="••••••••"></div>
+                        <div class="field-group">
+                            <label>Rol</label>
+                            <select id="usuario-rol">
+                                <option value="EMPLEADO">Empleado</option>
+                                <option value="ADMIN">Admin</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn btn-primary" onclick="guardarUsuario()">Guardar</button>
+                        <button class="btn btn-ghost" onclick="limpiarUsuario()">Limpiar</button>
+                    </div>
+                </div>
+                <div class="card table-card">
+                    <div class="card-header-label">REGISTROS</div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead><tr><th>ID</th><th>Nombre</th><th>Email</th><th>Rol</th><th>Activo</th><th>Acciones</th></tr></thead>
+                            <tbody id="tabla-usuarios"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MOVIMIENTOS -->
+            <div id="sec-movimientos" class="section">
+                <div class="page-header">
+                    <h2>Movimientos de Inventario</h2>
+                    <span class="page-subtitle">Registra entradas, salidas y transferencias entre bodegas</span>
+                </div>
+                <div class="card form-card">
+                    <div class="card-header-label">NUEVO MOVIMIENTO</div>
+                    <div id="movimiento-msg" class="msg"></div>
+                    <div class="form-grid">
+                        <div class="field-group">
+                            <label>Tipo de movimiento</label>
+                            <select id="mov-tipo" onchange="toggleBodegas()">
+                                <option value="ENTRADA">Entrada</option>
+                                <option value="SALIDA">Salida</option>
+                                <option value="TRANSFERENCIA">Transferencia</option>
+                            </select>
+                        </div>
+                        <div class="field-group" id="campo-origen"><label>ID Bodega Origen</label><input id="mov-origen" type="number" placeholder="1"></div>
+                        <div class="field-group" id="campo-destino"><label>ID Bodega Destino</label><input id="mov-destino" type="number" placeholder="1"></div>
+                        <div class="field-group"><label>Observación</label><input id="mov-observacion" placeholder="Opcional"></div>
+                    </div>
+                    <div class="productos-section">
+                        <div class="productos-header">
+                            <span class="card-header-label" style="margin:0">PRODUCTOS DEL MOVIMIENTO</span>
+                            <button class="btn btn-ghost btn-sm" onclick="agregarDetalle()">+ Agregar producto</button>
+                        </div>
+                        <div id="detalles-container">
+                            <div class="form-grid detalle-row">
+                                <div class="field-group"><label>ID Producto</label><input class="det-producto" type="number" placeholder="1"></div>
+                                <div class="field-group"><label>Cantidad</label><input class="det-cantidad" type="number" placeholder="10"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn btn-primary" onclick="registrarMovimiento()">Registrar Movimiento</button>
+                    </div>
+                </div>
+                <div class="card table-card">
+                    <div class="card-header-label">HISTORIAL</div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead><tr><th>ID</th><th>Fecha</th><th>Tipo</th><th>Usuario</th><th>Origen</th><th>Destino</th></tr></thead>
+                            <tbody id="tabla-movimientos"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- INVENTARIO -->
+            <div id="sec-inventario" class="section">
+                <div class="page-header">
+                    <h2>Control de Inventario</h2>
+                    <span class="page-subtitle">Consulta el stock actual por bodega y producto</span>
+                </div>
+                <div class="filter-bar">
+                    <button class="btn btn-primary" onclick="cargarInventario()">Ver todo</button>
+                    <button class="btn btn-warning" onclick="cargarStockBajo()">⚠ Stock bajo (&lt;10)</button>
+                </div>
+                <div class="card table-card">
+                    <div class="card-header-label">ESTADO DEL INVENTARIO</div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead><tr><th>ID</th><th>Bodega</th><th>Producto</th><th>Stock actual</th><th>Mínimo alerta</th></tr></thead>
+                            <tbody id="tabla-inventario"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AUDITORIA -->
+            <div id="sec-auditoria" class="section">
+                <div class="page-header">
+                    <h2>Auditoría del Sistema</h2>
+                    <span class="page-subtitle">Trazabilidad de todos los cambios realizados</span>
+                </div>
+                <div class="card form-card">
+                    <div class="card-header-label">FILTROS</div>
+                    <div class="form-grid">
+                        <div class="field-group">
+                            <label>Tipo de operación</label>
+                            <select id="audit-tipo">
+                                <option value="">Todos</option>
+                                <option value="INSERT">INSERT</option>
+                                <option value="UPDATE">UPDATE</option>
+                                <option value="DELETE">DELETE</option>
+                            </select>
+                        </div>
+                        <div class="field-group"><label>ID de usuario</label><input id="audit-usuario" type="number" placeholder="Opcional"></div>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn btn-primary" onclick="cargarAuditoria()">Buscar</button>
+                    </div>
+                </div>
+                <div class="card table-card">
+                    <div class="card-header-label">REGISTROS DE AUDITORÍA</div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead><tr><th>ID</th><th>Operación</th><th>Fecha</th><th>Usuario</th><th>Entidad</th><th>Antes</th><th>Después</th></tr></thead>
+                            <tbody id="tabla-auditoria"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+</div>
+
+<script src="js/app.js"></script>
+</body>
+</html>

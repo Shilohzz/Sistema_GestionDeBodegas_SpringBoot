@@ -8,6 +8,7 @@ import com.logitrack.logitrack.repository.UsuarioRepository;
 import com.logitrack.logitrack.service.UsuarioService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder; // Importación necesaria
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -17,10 +18,14 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
     private final UsuarioMapper usuarioMapper;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public UsuarioResponseDTO guardar(UsuarioRequestDTO dto) {
-        Usuario usuario = usuarioMapper.DTOAEntidad(dto, dto.contrasena());
+        // Encripto la contrasenha
+        String passwordEncriptada = passwordEncoder.encode(dto.contrasena());
+
+        Usuario usuario = usuarioMapper.DTOAEntidad(dto, passwordEncriptada);
         Usuario guardado = usuarioRepository.save(usuario);
         return usuarioMapper.entidadADTO(guardado);
     }
@@ -29,9 +34,13 @@ public class UsuarioServiceImpl implements UsuarioService {
     public UsuarioResponseDTO actualizar(Long id, UsuarioRequestDTO dto) {
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con id: " + id));
+
         usuario.setNombreCompleto(dto.nombreCompleto());
         usuario.setEmailInstitucional(dto.emailInstitucional());
-        usuario.setContrasenaHash(dto.contrasena());
+
+        // encripto la contrasenha
+        usuario.setContrasenaHash(passwordEncoder.encode(dto.contrasena()));
+
         usuario.setRol(dto.rol());
         Usuario actualizado = usuarioRepository.save(usuario);
         return usuarioMapper.entidadADTO(actualizado);
