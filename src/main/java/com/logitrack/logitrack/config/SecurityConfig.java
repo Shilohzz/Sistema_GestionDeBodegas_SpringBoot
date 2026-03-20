@@ -39,14 +39,16 @@ public class SecurityConfig {
                 .anyRequest().authenticated()).addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class).build();
     }
 
+
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(List.of(
-                "http://127.0.0.1:5500",
+                "http://172.16.41.125:5500",
                 "http://localhost:5500",
                 "http://localhost:8080",
-                "http://172.16.41.82:8080" // tengo que actualizar la ip para poder usar el programa.
+                "http://10.85.82.87:8080" // tengo que actualizar la ip para poder usar el programa.
         ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));

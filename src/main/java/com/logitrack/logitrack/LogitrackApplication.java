@@ -13,6 +13,7 @@ public class LogitrackApplication {
 		SpringApplication.run(LogitrackApplication.class, args);
 	}
 
+
 	@Bean
 	public WebMvcConfigurer corsConfigurer() {
 		return new WebMvcConfigurer() {

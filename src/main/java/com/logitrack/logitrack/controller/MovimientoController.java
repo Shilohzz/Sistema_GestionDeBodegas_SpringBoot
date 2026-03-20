@@ -53,4 +53,12 @@ public class MovimientoController {
             @RequestParam LocalDateTime fin) {
         return ResponseEntity.ok(movimientoService.buscarPorRangoDeFechas(inicio, fin));
     }
+
+
+    // Tipo GetMapping para obtener la lista que esperamos
+    @GetMapping("/recientes")
+    public ResponseEntity<List<MovimientoResponseDTO>> listarRecientes() {
+        return ResponseEntity.ok(movimientoService.listarRecientes());
+    }
+
 }

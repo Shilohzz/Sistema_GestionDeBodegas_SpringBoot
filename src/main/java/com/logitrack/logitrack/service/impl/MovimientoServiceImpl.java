@@ -113,7 +113,6 @@ public class MovimientoServiceImpl implements MovimientoService {
                 .toList();
     }
 
-
     private void validarReglasDenegocio(MovimientoRequestDTO dto) {
         switch (dto.tipo()) {
             case "ENTRADA" -> {
@@ -179,4 +178,17 @@ public class MovimientoServiceImpl implements MovimientoService {
                     return nuevo;
                 });
     }
+
+    // SobreEscribo el  métood
+    @Override
+    public List<MovimientoResponseDTO> listarRecientes() {
+        return movimientoRepository.findTop10ByOrderByFechaHoraDesc()
+                .stream()
+                .map(m -> movimientoMapper.entidadADTO(m,
+                        movimientoDetalleRepository.findByMovimientoId(m.getId())))
+                .toList();
+    }
 }
+
+
+
