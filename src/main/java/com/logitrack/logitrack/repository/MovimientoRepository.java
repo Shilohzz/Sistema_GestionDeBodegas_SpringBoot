@@ -15,5 +15,4 @@ public interface MovimientoRepository extends JpaRepository<Movimiento, Long> {
     // Esta es la consulta JPA para filtrar con la condición de "contar por tipo"
     long countByTipo(String tipo);
 
-
 }
